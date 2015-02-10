@@ -657,6 +657,11 @@ class HystrixDashboard {
 
 ---
 
+# API Gateway Pattern
+![inline](../Common/images/API_Gateway.png)
+
+---
+
 # [fit] RxJava
 ![](../Common/images/netflix_oss.jpeg)
 
