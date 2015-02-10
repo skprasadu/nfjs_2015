@@ -17,7 +17,7 @@ public class Application {
     RestTemplate restTemplate = new RestTemplate()
     ProducerResponse response = restTemplate.getForObject(producerUri, ProducerResponse.class)
 
-    "{\"value\": ${response.value}"
+    "{\"value\": ${response.value}}"
   }
 }
 

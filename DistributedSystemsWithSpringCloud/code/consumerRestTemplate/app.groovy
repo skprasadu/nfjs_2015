@@ -11,7 +11,7 @@ public class Application {
   String consume() {
     ProducerResponse response = restTemplate.getForObject("http://producer", ProducerResponse.class)
 
-    "{\"value\": ${response.value}"
+    "{\"value\": ${response.value}}"
   }
 }
 

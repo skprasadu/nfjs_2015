@@ -16,7 +16,7 @@ public class Application {
   String consume() {
     ProducerResponse response = client.getProducerResponse()
 
-    "{\"value\": ${response.value}"
+    "{\"value\": ${response.value}}"
   }
 
 }
