@@ -429,7 +429,7 @@ public class Application {
     RestTemplate restTemplate = new RestTemplate()
     ProducerResponse response = restTemplate.getForObject(instance.homePageUrl, ProducerResponse.class)
 
-    "{\"value\": ${response.value}"
+    "{\"value\": ${response.value}}"
   }
 }
 
@@ -469,7 +469,7 @@ String consume() {
   RestTemplate restTemplate = new RestTemplate()
   ProducerResponse response = restTemplate.getForObject(producerUri, ProducerResponse.class)
 
-  "{\"value\": ${response.value}"
+  "{\"value\": ${response.value}}"
 }
 ```
 
@@ -489,7 +489,7 @@ RestTemplate restTemplate
 String consume() {
   ProducerResponse response = restTemplate.getForObject("http://producer", ProducerResponse.class)
 
-  "{\"value\": ${response.value}"
+  "{\"value\": ${response.value}}"
 }
 ```
 
@@ -575,7 +575,7 @@ public class Application {
   String consume() {
     ProducerResponse response = client.getProducerResponse()
 
-    "{\"value\": ${response.value}"
+    "{\"value\": ${response.value}}"
   }
 
 }
