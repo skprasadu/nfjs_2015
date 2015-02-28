@@ -12,22 +12,14 @@ public class HelloWorldConfiguration extends Configuration {
     private String defaultName = "Stranger";
 
     @JsonProperty
-    public String getTemplate() {
-        return template;
-    }
+    public String getTemplate() { return template; }
 
     @JsonProperty
-    public void setTemplate(String template) {
-        this.template = template;
-    }
+    public void setTemplate(String template) { this.template = template; }
 
     @JsonProperty
-    public String getDefaultName() {
-        return defaultName;
-    }
+    public String getDefaultName() { return defaultName; }
 
     @JsonProperty
-    public void setDefaultName(String name) {
-        this.defaultName = name;
-    }
+    public void setDefaultName(String name) { this.defaultName = name; }
 }

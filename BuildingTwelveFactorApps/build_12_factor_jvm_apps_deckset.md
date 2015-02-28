@@ -60,6 +60,283 @@ Pivotal
 
 ---
 
+# Dropwizard
+- [http://dropwizard.io](http://dropwizard.io)
+- Library | Framework
+- GOAL: Meet "production-ready" web app needs.
+- Jetty / Jersey / Jackson
+- Metrics: [http://metrics.dropwizard.io/](http://metrics.dropwizard.io/)
+
+---
+
+`HelloWorldConfiguration`
+
+```java
+public class HelloWorldConfiguration extends Configuration {
+  @NotEmpty
+  private String template;
+
+  @NotEmpty
+  private String defaultName = "Stranger";
+
+  @JsonProperty
+  public String getTemplate() { return template; }
+
+  @JsonProperty
+  public void setTemplate(String template) { this.template = template; }
+
+  @JsonProperty
+  public String getDefaultName() { return defaultName; }
+
+  @JsonProperty
+  public void setDefaultName(String name) { this.defaultName = name; }
+}
+```
+
+---
+
+`HelloWorldResource`
+
+```java
+@Path("/hello-world")
+@Produces(MediaType.APPLICATION_JSON)
+public class HelloWorldResource {
+    private final String template;
+    private final String defaultName;
+    private final AtomicLong counter;
+
+    public HelloWorldResource(String template, String defaultName) {
+        this.template = template;
+        this.defaultName = defaultName;
+        this.counter = new AtomicLong();
+    }
+
+    @GET
+    @Timed
+    public Saying sayHello(@QueryParam("name") Optional<String> name) {
+        final String value = String.format(template, name.or(defaultName));
+        return new Saying(counter.incrementAndGet(), value);
+    }
+}
+```
+
+---
+
+`Saying`
+
+```java
+public class Saying {
+    private long id;
+
+    @Length(max = 3)
+    private String content;
+
+    public Saying() {}
+
+    public Saying(long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
+
+    @JsonProperty
+    public long getId() { return id; }
+
+    @JsonProperty
+    public String getContent() { return content; }
+}
+```
+
+---
+
+`TemplateHealthCheck`
+
+```java
+public class TemplateHealthCheck extends HealthCheck {
+    private final String template;
+
+    public TemplateHealthCheck(String template) { this.template = template; }
+
+    @Override
+    protected Result check() throws Exception {
+        final String saying = String.format(template, "TEST");
+        if (!saying.contains("TEST")) {
+            return Result.unhealthy("template doesn't include a name");
+        }
+        return HealthCheck.Result.healthy();
+    }
+}
+```
+
+---
+
+`HelloWorldApplication`
+
+```java
+public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
+    public static void main(String[] args) throws Exception {
+        new HelloWorldApplication().run(args);
+    }
+
+    @Override
+    public String getName() { return "hello-world"; }
+
+    @Override
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+        bootstrap.setConfigurationFactoryFactory(new EnvironmentConfigurationFactoryFactory());
+    }
+
+    @Override
+    public void run(HelloWorldConfiguration configuration,
+                    Environment environment) {
+        final HelloWorldResource resource = new HelloWorldResource(
+                configuration.getTemplate(),
+                configuration.getDefaultName()
+        );
+        final TemplateHealthCheck healthCheck =
+                new TemplateHealthCheck(configuration.getTemplate());
+        environment.healthChecks().register("template", healthCheck);
+        environment.jersey().register(resource);
+    }
+}
+```
+
+---
+
+`hello-world.yml`
+
+```haml
+template: $env:TEMPLATE:Hello, %s!
+defaultName: $env:DEFAULT_NAME:Stranger
+```
+
+---
+
+# [fit] DEMO
+
+---
+
+# Spring Boot
+- [http://projects.spring.io/spring-boot](http://projects.spring.io/spring-boot)
+- Opinionated convention over configuration
+- Production-ready Spring applications
+- Embed Tomcat, Jetty or Undertow
+- *STARTERS*
+- Actuator: Metrics, health checks, introspection
+
+---
+
+# [http://start.spring.io](start.spring.io)
+![](../Common/images/start_spring.png)
+
+---
+
+`HelloWorldController`
+
+```java
+@RestController("/hello-world")
+public class HelloWorldController {
+
+    private final String template;
+    private final String defaultName;
+    private final AtomicLong counter;
+
+    @Autowired
+    public HelloWorldController(@Value("${template}") String template, @Value("${default.name}") String defaultName) {
+        this.template = template;
+        this.defaultName = defaultName;
+        this.counter = new AtomicLong();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    public Saying sayHello(@RequestParam(value = "name", required = false) String name) {
+        final String value = String.format(template, (name != null) ? name : defaultName);
+        return new Saying(counter.incrementAndGet(), value);
+    }
+}
+```
+
+---
+
+`Saying`
+
+```java
+public class Saying {
+    private long id;
+
+    @Length(max = 3)
+    private String content;
+
+    public Saying() {}
+
+    public Saying(long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
+
+    @JsonProperty
+    public long getId() { return id; }
+
+    @JsonProperty
+    public String getContent() { return content; }
+}
+```
+
+---
+
+`TemplateHealthCheck`
+
+```java
+@Component
+public class TemplateHealthCheck implements HealthIndicator {
+
+    private final String template;
+
+    @Autowired
+    public TemplateHealthCheck(@Value("${template}") String template) {
+        this.template = template;
+    }
+
+    @Override
+    public Health health() {
+        final String saying = String.format(template, "TEST");
+        if (!saying.contains("TEST")) {
+            return Health.down().withDetail("error", "template doesn't include a name").build();
+        }
+        return Health.up().build();
+    }
+}
+```
+
+---
+
+`HelloSpringBootApplication`
+
+```java
+@SpringBootApplication
+public class HelloSpringBootApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(HelloSpringBootApplication.class, args);
+    }
+}
+```
+
+---
+
+`application.yml`
+
+```haml
+template: Hello, %s!
+default:
+  name: Stranger
+```
+
+---
+
+# [fit] DEMO
+
+---
+
 > I. Codebase
 -- One codebase tracked in revision control, many deploys
 

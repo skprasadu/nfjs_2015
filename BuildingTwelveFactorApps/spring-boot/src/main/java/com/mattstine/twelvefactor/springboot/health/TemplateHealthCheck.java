@@ -12,7 +12,7 @@ public class TemplateHealthCheck implements HealthIndicator {
     private final String template;
 
     @Autowired
-    public TemplateHealthCheck(@Value("${template}")String template) {
+    public TemplateHealthCheck(@Value("${template}") String template) {
         this.template = template;
     }
 

@@ -13,9 +13,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     }
 
     @Override
-    public String getName() {
-        return "hello-world";
-    }
+    public String getName() { return "hello-world"; }
 
     @Override
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {

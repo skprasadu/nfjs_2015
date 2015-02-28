@@ -29,5 +29,4 @@ public class HelloWorldController {
         final String value = String.format(template, (name != null) ? name : defaultName);
         return new Saying(counter.incrementAndGet(), value);
     }
-
 }
