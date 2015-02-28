@@ -1,0 +1,2 @@
+template: $env:TEMPLATE:Hello, %s!
+defaultName: $env:DEFAULT_NAME:Stranger
