@@ -1,0 +1,138 @@
+Go Programming for Java Developers
+
+Matt Stine
+Senior Product Manager, Pivotal
+matt.stine@gmail.com
+http://www.mattstine.com
+@mstine
+
+* Cloud Foundry Architecture - January 2013
+
+.image images/CF_Stack_2013.png _ 1000
+
+* Cloud Foundry Architecture - January 2014
+
+.image images/CF_Stack_2014.png _ 1000
+
+* Go in Cloud Foundry
+
+- Mike Gehard: [[https://www.youtube.com/watch?v=d5aHr8VGU-8][Go Within Cloud Foundry]]
+- Onsi Fakhouri: [[https://www.youtube.com/watch?v=1OkmVTFhfLY][Diego: Re-envisioning the Elastic Runtime]]
+
+.image http://golang.org/doc/gopher/appenginegophercolor.jpg _ 600
+
+* Agenda
+
+- Hello World
+- Just Enough Go
+- Why Go?
+
+*Distinctives*from*Java:*
+
+- Features and Idioms
+- Packaging / Modularity
+- Types / OOP / Interfaces
+- Concurrency
+
+* Hello World
+
+.play code/hello/hello.go
+
+* Just Enough Go
+
+- Functions
+- Variables
+- Types
+- Constants
+- Loops
+- Conditionals
+
+.image http://golang.org/doc/gopher/pencil/gopherswim.jpg 300 _
+
+* Functions
+
+.play code/gobyexample/examples/functions/functions.go /START OMIT/,/END OMIT/
+
+* Variables
+
+.play code/gobyexample/examples/variables/variables.go /START OMIT/,/END OMIT/
+
+* Types
+
+  bool
+
+  string
+
+  int  int8  int16  int32  int64
+  uint uint8 uint16 uint32 uint64 uintptr
+
+  byte // alias for uint8
+
+  rune // alias for int32
+       // represents a Unicode code point
+
+  float32 float64
+
+  complex64 complex128
+
+* Constants
+
+.play code/gobyexample/examples/constants/constants.go /START OMIT/,/END OMIT/
+
+* Loops
+
+.play code/gobyexample/examples/for/for.go /START OMIT/,/END OMIT/
+
+* Conditionals
+
+.play code/gobyexample/examples/if-else/if-else.go /START OMIT/,/END OMIT/
+
+* Conditionals
+
+.play code/gobyexample/examples/switch/switch.go /START_ONE OMIT/,/END_ONE OMIT/
+
+* Conditionals
+
+.play code/gobyexample/examples/switch/switch.go /START_TWO OMIT/,/END_TWO OMIT/
+
+* Why Go?
+
+.image images/searls.png
+
+* Iron Triangle of Language Design
+
+.image images/iron_triangle.png
+
+* A History Lesson
+
+- *2007-09-21:* Go invented at Google by Robert Griesemer, Rob Pike, and Ken Thompson
+- *2009-11-10:* Go released as OSS
+- *2012-03-28:* Go 1.0 is Released
+
+* Software Engineering in the LARGE
+
+.image http://talks.golang.org/2012/splash/datacenter.jpg _ 900
+
+[[http://talks.golang.org/2012/splash.article][http://talks.golang.org/2012/splash.article]]
+
+* Goals
+
+- Safety and efficiency of a statically-typed, compiled language
+- Productivity and feel of a dynamic, interpreted language
+
+*Address*modern*compute*environments:*
+
+- Multicore Processors
+- Networked Systems
+- Massive Computational Clusters
+- Web Programming Model
+
+.image http://golang.org/doc/gopher/pencil/gopherswrench.jpg _ 400
+
+* Not a Giant Box of Legos
+
+.image images/legos.jpg _ 700
+
+* A Kit for Systems Software
+
+.image images/xwing.jpg _ 700
