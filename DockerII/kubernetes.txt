@@ -1,0 +1,11 @@
+cluster/kubectl.sh get pods
+cluster/kubectl.sh get rc
+cluster/kubectl.sh get services
+
+cluster/kubectl.sh create -f nfjs/lattice-app.json
+
+cluster/kubectl.sh create -f nfjs/lattice-service.json
+
+cluster/kubectl.sh get pods
+cluster/kubectl.sh get rc
+cluster/kubectl.sh get services
