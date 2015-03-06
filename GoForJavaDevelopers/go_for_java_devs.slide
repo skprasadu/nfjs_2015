@@ -97,6 +97,8 @@ http://www.mattstine.com
 
 * Why Go?
 
+* Why Go?
+
 .image images/searls.png
 
 * Iron Triangle of Language Design
@@ -136,3 +138,337 @@ http://www.mattstine.com
 * A Kit for Systems Software
 
 .image images/xwing.jpg _ 700
+
+* Differences from Java
+
+* Differences from Java
+
+- Features and Idioms
+- Packaging / Modularity
+- Types / OOP / Interfaces
+- Concurrency
+
+* Features and Idioms
+
+* Multiple Return Values
+
+.play code/gobyexample/examples/multiple-return-values/multiple-return-values.go /START OMIT/,/END OMIT/
+
+* Closures
+
+.play code/gobyexample/examples/closures/closures.go /START OMIT/,/END OMIT/
+
+* Lambdas Aren't Closures!
+
+  public class Closures {
+      @FunctionalInterface
+      public interface IntReturner {
+          Integer nextInt();
+      }
+
+      public static IntReturner intSeq() {
+          int i = 0;
+          return () -> {
+              return i++;    // <--- WON'T COMPILE!
+          };
+      }
+
+      public static void main(String[] args) {
+          IntReturner seq = intSeq();
+
+          System.out.println(seq.nextInt());
+          System.out.println(seq.nextInt());
+          System.out.println(seq.nextInt());
+      }
+  }
+
+* Can Do With a Stream (Sort of...)
+
+  public class Streams {
+      @FunctionalInterface
+      public interface IntReturner {
+          Integer nextInt();
+      }
+
+      public static IntReturner intSeq() {
+          final Iterator<Integer> integerSeq = Stream.iterate(1, Streams::inc).iterator();
+          return () -> integerSeq.next();
+      }
+
+      private static int inc(final int number) {
+          return number + 1;
+      }
+
+      public static void main(String[] args) {
+          IntReturner seq = intSeq();
+
+          System.out.println(seq.nextInt());
+          System.out.println(seq.nextInt());
+          System.out.println(seq.nextInt());
+      }
+  }
+
+* Where’s my java.util.List? Slices
+
+.play code/gobyexample/examples/slices/slices.go /START_ONE OMIT/,/END_ONE OMIT/
+
+* Where’s my java.util.List? Slices
+
+.play code/gobyexample/examples/slices/slices.go /START_TWO OMIT/,/END_TWO OMIT/
+
+* Where’s my java.util.Map? Maps
+
+.play code/gobyexample/examples/maps/maps.go /START_ONE OMIT/,/END_ONE OMIT/
+
+* Where’s my java.util.Map? Maps
+
+.play code/gobyexample/examples/maps/maps.go /START_TWO OMIT/,/END_TWO OMIT/
+
+* Looping with Range
+
+.play code/gobyexample/examples/range/range.go /START OMIT/,/END OMIT/
+
+* We Don't Need No Stinkin' Exceptions!
+
+.play code/gobyexample/examples/errors/errors_f1.go /START OMIT/,/END OMIT/
+
+* We Don't Need No Stinkin' Exceptions!
+
+.code code/gobyexample/examples/errors/errors_f2.go /START_ONE OMIT/,/END_ONE OMIT/
+
+* We Don't Need No Stinkin' Exceptions!
+
+.play code/gobyexample/examples/errors/errors_f2.go /START_TWO OMIT/,/END_TWO OMIT/
+
+* (Semi)automatic Resource Management
+
+.code code/gobyexample/examples/defer/defer.go /START_ONE OMIT/,/END_ONE OMIT/
+
+* (Semi)automatic Resource Management
+
+.play code/gobyexample/examples/defer/defer.go /START_TWO OMIT/,/END_TWO OMIT/
+
+* Packaging / Modularity
+
+* TL;DR
+
+- Java == Complex
+- Go == Simple
+
+* Java Packaging
+
+- Every class in a package
+- Import classes explicitly
+
+  import java.util.Map
+
+- Import all classes in a package
+
+  import java.util.*
+
+- Statically import class static members:
+
+  import static java.lang.Math.PI
+  import static java.lang.Math.*
+
+* Go Packaging
+
+- All types and functions belong to a package.
+- Every source file must declare its package.
+- Import packages to gain access to exported members.
+
+* Java Scoping
+
+- `public` - any class in same package, or any importing class in a different package, can see
+- default ("package private") - any class in same package can see
+- `protected` - any class in same package, or any subclass in a different package, can see
+- `private` - no class other than this can see
+- Scope indicated by prefixing name at declaration time.
+
+* Go Scoping
+
+- exported - any code in an importing file can see
+- exported names start with uppercase letter
+
+  func Copy(src *[]byte, dest *[]byte)
+
+- non-exported - only code in the same package can see
+- non-exported names start with _ or lowercase letter
+
+  func  copy(src *[]byte, dest *[]byte)
+  func _Copy(src *[]byte, dest *[]byte)
+
+* Java Naming
+
+- Conventional correspondence to directory paths (e.g. `com.ms.foo` should be at `src/com/ms/foo`) - tools expect this!
+- Package paths do not have to be unique at compile or runtime (first dependency found/loaded wins!)
+- Conventional correspondence to URL of author (e.g. my domain is `www.mattstine.com`, so my packages names start with `com.mattstine`) - but no actual relationship to source code location!
+
+* Go Naming
+
+- Conventional correspondence to directory paths (e.g. `github.com/go-martini/martini` should be at `src/github.com/go-martini/martini`) - tools expect this!
+- Package paths *MUST*BE*UNIQUE* across a `$GOPATH`.
+- Package names do not have to be unique.
+- Referring to imported names must be qualified by package name ( e.g. `sql.DB` not just `DB` )...can locally alias (e.g. `import`dbstuff`"database/sql"`)
+- Conventional correspondence to URL of code location (e.g. `import`http://github.com/joefitzgerald/cfenv` as `import`"github.com/joefitzgerald/cfenv"`).
+- Can "go get" remote packages - supports Git, SVN, Mercurial, Bazaar.
+
+* Miscellany
+
+Java admits:
+
+- circular package dependencies
+- dead imports
+
+Go rejects:
+
+- circular package dependencies
+- dead imports
+
+* Types/OOP/Interfaces
+
+* No Classes
+
+.image images/morpheus.png 550 _
+
+* No Inheritance
+
+.image images/chuck.png 550 _
+
+* For Realz This Time...
+
+.image images/bloch.png 350 _
+
+* Structs FTW
+
+.code code/point/point.go /START_POINT OMIT/,/END_POINT OMIT/
+
+* Methods are Functions!
+
+.code code/point/point.go /START_TRANSLATE OMIT/,/END_TRANSLATE OMIT/
+
+* Composition FTW
+
+.code code/point/point.go /START_COMPOSITION OMIT/,/END_COMPOSITION OMIT/
+
+* Problem
+
+- I have `Points`.
+- I have `ColorPoints`.
+- `ColorPoints` are like `Points`, but they are not `Points`.
+- But I want to compute the euclidean distance between them.
+- What to do?
+
+* Interfaces!
+
+.image images/interfaces.png 400 _
+
+* Interfaces Group Behaviors
+
+.code code/point/point.go /START_INTERFACES OMIT/,/END_INTERFACES OMIT/
+
+* How are Interfaces Satisfied?
+
+.image images/satisfaction.png 550 _
+
+* Calculating Distance
+
+.code code/point/point.go /START_DBW OMIT/,/END_DBW OMIT/
+
+* Point Satisfies Distancer and Positioner
+
+.code code/point/point.go /START_PS OMIT/,/END_PS OMIT/
+
+* ColorPoint Satisfies Distancer and Positioner
+
+.code code/point/point.go /START_CPS OMIT/,/END_CPS OMIT/
+
+* Behavior NOT Taxonomy
+
+.image images/taxonomy.png 450 _
+
+* Animal Satisfies Distancer and Positioner
+
+.code code/point/point.go /START_ANIMAL OMIT/,/END_ANIMAL OMIT/
+
+* GO!
+
+.play code/point/point.go /START OMIT/,/END OMIT/
+
+* Concurrency
+
+* Concurrency vs. Parallelism
+
+- Parallelism = leveraging simultaneous execution of work to perform many things at once. Limited to number of processors/cores you have.
+- Concurrency = composition of work to manage many things at once. No theoretical limit.
+- Rob Pike: [[http://www.youtube.com/watch?v=cN_DpYBzKso][Concurrency is Not Parallelism]]
+
+* Parallelism: How?
+
+Java:
+
+- Threads
+- OS managed
+- Share address space with other threads in same process
+
+Go:
+
+- Goroutines
+- user-space managed by language runtime
+- multiplexed onto pool of OS threads
+
+* Synchronization?
+
+Java:
+
+- Shared memory
+- Locking
+
+Go:
+
+- Can share memory (see [[http://golang.org/pkg/sync][http://golang.org/pkg/sync]])
+- But there is a better way!
+
+* The Better Way
+
+"Do not communicate by sharing memory; instead, share memory by communicating."
+
+– [[http://golang.org/doc/effective_go.html][http://golang.org/doc/effective_go.html]]
+
+* Goroutines
+
+.code code/gobyexample/examples/goroutines/goroutines.go /START_F OMIT/,/END_F OMIT/
+
+.play code/gobyexample/examples/goroutines/goroutines.go /START_MAIN OMIT/,/END_MAIN OMIT/
+
+* Channels
+
+.play code/gobyexample/examples/channels/channels.go /START OMIT/,/END OMIT/
+
+* Channel Buffering
+
+.play code/gobyexample/examples/channel-buffering/channel-buffering.go /START OMIT/,/END OMIT/
+
+* Channel Synchronization
+
+.play code/gobyexample/examples/channel-synchronization/channel-synchronization.go /START OMIT/,/END OMIT/
+
+* Select
+
+.code code/gobyexample/examples/select/select.go /START_ONE OMIT/,/END_ONE OMIT/
+
+* Select
+
+.play code/gobyexample/examples/select/select.go /START_TWO OMIT/,/END_TWO OMIT/
+
+* Closing Channels
+
+.code code/gobyexample/examples/closing-channels/closing-channels.go /START_ONE OMIT/,/END_ONE OMIT/
+
+* Closing Channels
+
+.play code/gobyexample/examples/closing-channels/closing-channels.go /START_TWO OMIT/,/END_TWO OMIT/
+
+* Range Over Channels
+
+.play code/gobyexample/examples/range-over-channels/range-over-channels.go /START OMIT/,/END OMIT/
