@@ -472,3 +472,12 @@ Go:
 * Range Over Channels
 
 .play code/gobyexample/examples/range-over-channels/range-over-channels.go /START OMIT/,/END OMIT/
+
+* THE END!
+
+This talk: [[https://github.com/mstine/nfjs_2015/tree/master/GoForJavaDevelopers][https://github.com/mstine/nfjs_2015/tree/master/GoForJavaDevelopers]]
+
+*CREDITS*:
+
+[[https://gobyexample.com/][https://gobyexample.com]]
+[[https://github.com/mstine/gobyexample][https://github.com/mstine/gobyexample]]
