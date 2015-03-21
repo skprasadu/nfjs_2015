@@ -17,6 +17,15 @@ Pivotal
 
 ---
 
+![right fit](../Common/images/cloud-native-book.jpg)
+# I wrote a little cloud book...
+
+FREE - Compliments of Pivotal
+
+[http://bit.ly/cloud-native-book](http://bit.ly/cloud-native-book)
+
+---
+
 ![](../Common/images/12factor.png)
 # [fit] http://12factor.net
 

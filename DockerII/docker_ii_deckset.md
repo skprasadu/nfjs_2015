@@ -17,6 +17,15 @@ Pivotal
 
 ---
 
+![right fit](../Common/images/cloud-native-book.jpg)
+# I wrote a little cloud book...
+
+FREE - Compliments of Pivotal
+
+[http://bit.ly/cloud-native-book](http://bit.ly/cloud-native-book)
+
+---
+
 # What's missing?
 - Capacity Management
 - Scheduling / Bin Packing
