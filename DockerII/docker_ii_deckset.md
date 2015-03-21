@@ -319,9 +319,10 @@ https://mesosphere.github.io/marathon/
 
 ---
 
-# [fit] Lattice
+# Lattice
+![inline](../Common/images/lattice.png)
 
-https://github.com/cloudfoundry-incubator/lattice
+https://lattice.cf
 
 ---
 
