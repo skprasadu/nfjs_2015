@@ -202,7 +202,7 @@ http://kubernetes.io/
 
 # [fit] Minions
 # [fit] Pods
-# [fit] Resource Controllers
+# [fit] Replication Controllers
 # [fit] Services
 
 ---
