@@ -203,6 +203,14 @@ public class ServiceBrokerControllerIntegrationTest {
 
 ---
 
+# Stub Frameworks
+
+- _Moco_ (https://github.com/dreamhead/moco)
+- _Stubby4J_ (https://github.com/azagniotov/stubby4j)
+- _Mountebank_ (http://www.mbtest.org/) (_Node.JS_)
+
+---
+
 # [fit] Consumer
 # [fit] Driven
 # [fit] _Contracts_
