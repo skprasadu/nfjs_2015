@@ -103,7 +103,8 @@ web:
   ports:
    - "5000:5000"
   volumes:
-   - .:/code  links:
+   - .:/code  
+  links:
    - redis
 redis:
   image: redis
@@ -211,7 +212,7 @@ http://kubernetes.io/
 
 ---
 
-```json
+```
 {
   "id": "lattice-app-controller",
   "kind": "ReplicationController",
