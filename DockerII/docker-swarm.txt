@@ -19,4 +19,4 @@ docker-machine create \
 
 $(docker-machine env --swarm swarm-master)
 
-docker run --rm -i -t -p 8080:8080 -e INSTANCE_INDEX=0 -e PORT=8080 cloudfoundry/lattice-app /lattice-app
+docker run --rm -i -t -p 8080:8080 -e INSTANCE_INDEX=0 -e PORT=8080 cloudfoundry/lattice-app lattice-app
