@@ -30,7 +30,7 @@ repositories {
 
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-actutator")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.cloud:spring-cloud-starter-feign:1.0.0.RC3")
     compile("org.springframework.cloud:spring-cloud-starter-eureka:1.0.0.RC3")
