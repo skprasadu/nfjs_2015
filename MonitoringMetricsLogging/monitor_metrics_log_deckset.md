@@ -18,6 +18,15 @@ Pivotal
 
 ---
 
+![right fit](../Common/images/cloud-native-book.jpg)
+# I wrote a little cloud book...
+
+FREE - Compliments of Pivotal
+
+[http://bit.ly/cloud-native-book](http://bit.ly/cloud-native-book)
+
+---
+
 # [fit] _VISIBILITY_
 
 ---
@@ -220,6 +229,12 @@ meter.hello.requests
     15-minute rate = 1.01 events/second
 ```
 
+^ we care about "recency" - what is process doing right now
+
+^Exponentially weighted moving average
+
+^ smoothing factor affects sensitivity
+
 ---
 
 # [fit] Histograms
@@ -259,6 +274,12 @@ histogram.search.results
               99% <= 2870.00
             99.9% <= 2870.00
 ```
+
+^ We can't keep all of this...
+
+^ Reservoir sampling -- statistically representative sample of stream of data
+
+^ Forward-decaying priority sampling - maintaing statistically rep sample of last 5 minutes
 
 ---
 
