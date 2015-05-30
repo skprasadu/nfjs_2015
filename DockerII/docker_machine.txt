@@ -3,4 +3,4 @@ $(docker-machine env nfjs)
 
 docker-machine ls
 
-docker-machine create -d amazonec2 --amazonec2-access-key=$AWS_ACCESS_KEY_ID --amazonec2-secret-key=$AWS_SECRET_ACCESS_KEY --amazonec2-vpc-id=vpc-69e9a90c --amazonec2-zone=b docker
+docker-machine create -d amazonec2 --amazonec2-access-key=$AWS_ACCESS_KEY_ID --amazonec2-secret-key=$AWS_SECRET_ACCESS_KEY --amazonec2-vpc-id=vpc-69e9a90c --amazonec2-zone=b --amazonec2-subnet-id=subnet-1ea20535 aws
