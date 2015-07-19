@@ -3,7 +3,7 @@ ltc target 192.168.11.11.xip.io
 ltc logs lattice-app
 ltc visualize --rate 1s
 
-ltc start lattice-app cloudfoundry/lattice-app
+ltc create lattice-app cloudfoundry/lattice-app
 
 ltc list
 
