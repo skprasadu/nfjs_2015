@@ -686,6 +686,37 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="sect1">
+<h2 id="_sign_up_for_a_docker_hub_account">Sign Up for a Docker Hub Account</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you haven&#8217;t already, create an account on Docker Hub that you can use when we push images.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In a browser, navigate to <a href="https://hub.docker.com/account/signup" class="bare">https://hub.docker.com/account/signup</a>.</p>
+</li>
+<li>
+<p>Fill out the form and click <strong>Sign up</strong>:</p>
+<div class="imageblock">
+<div class="content">
+<img src="images/docker_hub_signup.png" alt="docker hub signup">
+</div>
+</div>
+</li>
+<li>
+<p>Activate your account by clicking <strong>Confirm Your Email</strong> in the email you receive from Docker Hub:</p>
+<div class="imageblock">
+<div class="content">
+<img src="images/docker_hub_email.png" alt="docker hub email">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_set_up_prerequisites">Set Up Prerequisites</h2>
 <div class="sectionbody">
 <div class="olist arabic">
@@ -772,7 +803,7 @@ If you get a &#8220;Permission denied&#8221; error, your <code>/usr/local/bin di
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-shell" data-lang="shell">$ docker run -p 8080:8080 mstine/hello-docker-world</code></pre>
+<pre class="highlight"><code class="language-shell" data-lang="shell">$ docker run --rm -p 8080:8080 mstine/hello-docker-world</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -803,7 +834,7 @@ If you get a &#8220;Permission denied&#8221; error, your <code>/usr/local/bin di
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-19 13:16:15 CDT
+Last updated 2015-07-19 13:49:00 CDT
 </div>
 </div>
 </body>
