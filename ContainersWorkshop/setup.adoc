@@ -1,6 +1,20 @@
 :compat-mode:
 = Set Up Your Environment!
 
+== Sign Up for a Docker Hub Account
+
+If you haven't already, create an account on Docker Hub that you can use when we push images.
+
+. In a browser, navigate to https://hub.docker.com/account/signup.
+
+. Fill out the form and click *Sign up*:
++
+image::images/docker_hub_signup.png[]
+
+. Activate your account by clicking *Confirm Your Email* in the email you receive from Docker Hub:
++
+image::images/docker_hub_email.png[]
+
 == Set Up Prerequisites
 
 . Install *Docker* for your particular operating system by following the appropriate instructions:
@@ -43,7 +57,7 @@ Using a Docker-enabled terminal (either by double-clicking on the boot2docker ic
 
 [source,shell]
 ----
-$ docker run -p 8080:8080 mstine/hello-docker-world
+$ docker run --rm -p 8080:8080 mstine/hello-docker-world
 ----
 
 This will pull down the OpenJDK 8 Docker image layers we'll be using in the workshop, as well as the image layers for a sample application. It will then start the sample application and expose it on port 8080 on your boot2docker VM.
