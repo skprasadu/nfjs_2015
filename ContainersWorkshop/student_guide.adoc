@@ -1,0 +1,35 @@
+= Containers: What Every Developer Needs to Know about Docker and More!
+
+Student Guide
+
+== Instructor Details
+
+Matt Stine (https://twitter.com/mstine[@mstine]) +
+Principal Engineer / Senior Project Manager - Pivotal +
+mstine@pivotal.io
+
+== Schedule
+
+  8:00 AM - 9:00 AM:: Workshop Registration
+ 9:00 AM - 10:00 AM:: Laptop Environment Setup
+10:00 AM - 11:30 AM:: Intro to Docker and Containers Lecture
+11:30 AM - 12:30 PM:: First Lab Set
+12:30 PM -  1:30 PM:: Lunch
+ 1:30 PM -  3:00 PM:: Advanced Containers Lecture
+ 3:30 PM -  6:00 PM:: Second Lab Set
+
+== Course Materials
+
+* link:setup.html[Laptop Environment Setup]
+* Intro Lecture (link:slides/intro.pdf[Slides])
+** link:labs/lab_01.html[Lab 1 - ???]
+** link:labs/lab_02.html[Lab 2 - ???]
+** link:labs/lab_03.html[Lab 3 - ???]
+** link:labs/lab_04.html[Lab 4 - ???]
+** link:labs/lab_05.html[Lab 5 - ???]
+* Advanced Lecture (link:slides/advanced.pdf[Slides])
+** link:labs/lab_06.html[Lab 6 - ???]
+** link:labs/lab_07.html[Lab 7 - ???]
+** link:labs/lab_08.html[Lab 8 - ???]
+** link:labs/lab_09.html[Lab 9 - ???]
+** link:labs/lab_10.html[Lab 10 - ???]
