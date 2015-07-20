@@ -1,0 +1,216 @@
+= Lab XX - Working with Docker Volumes
+
+In this lab we'll experiment with Docker Volumes.
+Volumes are directories within one or more containers that bypass the Union File System.
+They are designed for the persistence of data independent of the lifecycle of any one container.
+
+== Create a New Volume with a Container
+
+. Create a new Debian container with a volume called `/data`:
++
+----
+$ docker run --name my_volume -it -v /data debian
+----
++
+This will open an interactive Bash shell inside the new container.
+
+. In a separate terminal window, inspect the container to view its volume information:
++
+----
+$ docker inspect -f "{{.Volumes}}" my_volume map[/data:/mnt/sda1/var/lib/docker/volumes/db4935f761833e0ee72d637edc40f9eb6e5989099e70d48821e738090c220928/_data]
+
+$ docker inspect -f "{{.VolumesRW}}" my_volume
+map[/data:true]
+----
++
+The first command shows the location of the `/data` volume inside of your boot2docker VM. The second command shows that the read/write bit is set to true on the `/data` volume.
+
+. In the container terminal window, add some data to `/data`:
++
+----
+$ echo bar > /data/foo && cat /data/foo
+bar
+----
+
+. Kill the container by exiting from the container terminal window:
++
+----
+$ exit
+exit
+----
+
+== Mount Another Container's Volume in a New Container
+
+. Create a new container which mounts the volume from `my_volume` using the `--volumes-from` flag:
++
+----
+$ docker run --name mount_existing_volume -it --volumes-from my_volume debian
+----
+
+. Verify that the data you created earlier is still available:
++
+----
+$ cat /data/foo
+bar
+----
+
+. Kill the container by exiting from the container terminal window:
++
+----
+$ exit
+exit
+----
+
+== Mount a Host Directory in a New Container
+
+Docker also supports mounting existing host directories as volumes. Boot2docker attempts to share the home directory tree (e.g. `/Users` on OS X) into the VM, so you ought to be able to share directories within that tree. We'll try that here.
+
+. Within your ``home'' directory, create a new directory called 'docker_data', and change to the directory:
++
+----
+$ mkdir docker_data && cd docker_data
+----
+
+. Add some data to the current directory:
++
+----
+$ echo bar >> foo
+----
+
+. Create a new container which mounts the current working directory as `/data`:
++
+----
+$ docker run --name mount_host_dir -it -v $(pwd):/data debian
+----
+
+. Verify that the data you created earlier is still available:
++
+----
+$ cat /data/foo
+bar
+----
+
+. Kill the container by exiting from the container terminal window:
++
+----
+$ exit
+exit
+----
+
+== Persist Data Between MySQL Containers Using a Data Volume Container
+
+Containers can be created solely for the purpose of creating volumes that will be mounted into other containers. These containers are called _Data Volume Containers_. We'll use a data volume container to persist data from a MySQL database across multiple MySQL containers.
+
+. Create a Debian container to serve as the MySQL data volume container:
++
+----
+$ docker create --name my-mysql-volumes -v /var/lib/mysql debian /bin/true
+----
++
+The MySQL container image we'll be using expects to persist its data at `/var/lib/mysql`. When we mount the volume we just created, its contents will take the place of `/var/lib/mysql` within the container's union file system.
+
+. Create a MySQL container which will host the MySQL processes:
++
+----
+$ docker run --name my-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d --volumes-from my-mysql-volumes mysql
+----
+
+. Change your directory to the location of the MySQL init script we'll use:
++
+----
+$ cd $WORKSHOP_HOME/ContainersWorkshop/code/mysql-scripts
+----
+
+. Execute the script using the MySQL client in an ephemeral container:
++
+----
+$ docker run -it --link my-mysql:mysql -v $(pwd):/scripts --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD" < /scripts/foo.sql'
+----
++
+This command mounts the current directory as `/scripts` and then executes the `mysql` client command, passing it connection information obtained from Docker link environment variables, as well as the `foo.sql` script.
+
+. Interactively verify that the data was loaded:
++
+----
+$ docker run -it --link my-mysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+Warning: Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 3
+Server version: 5.6.25 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use foo;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> select * from bar;
++------+
+| baz  |
++------+
+|    1 |
+|    2 |
+|    3 |
++------+
+3 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+----
+
+. Kill and remove the `my-mysql` container:
++
+----
+$ docker kill my-mysql && docker rm my-mysql
+my-mysql
+my-mysql
+----
+
+. Start a new `my-mysql` container, and mount the original volume:
++
+----
+$ docker run --name my-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d --volumes-from my-mysql-volumes mysql
+----
+
+. Interactively verify that the original data is still available:
++
+----
+$ docker run -it --link my-mysql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
+Warning: Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 1
+Server version: 5.6.25 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use foo;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> select * from bar;
++------+
+| baz  |
++------+
+|    1 |
+|    2 |
+|    3 |
++------+
+3 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+----
