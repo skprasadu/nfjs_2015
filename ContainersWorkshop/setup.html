@@ -831,10 +831,29 @@ If you get a &#8220;Permission denied&#8221; error, your <code>/usr/local/bin di
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_more_cache_warming">More Cache Warming</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Run each of the following commands from a Docker-enabled terminal:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-shell" data-lang="shell">$ docker run debian echo hello world
+$ docker run busybox echo hello world
+$ docker run mysql echo hello world
+$ docker run redis echo hello world</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will load the remainder of the base images we&#8217;ll need throughout the workshop.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-19 13:49:00 CDT
+Last updated 2015-07-20 06:08:45 MDT
 </div>
 </div>
 </body>

@@ -78,3 +78,17 @@ $ boot2docker ip
 ----
 
 And then access the application using that IP in the browser. For the IP above, you would access http://192.168.59.104:8080.
+
+== More Cache Warming
+
+Run each of the following commands from a Docker-enabled terminal:
+
+[source,shell]
+----
+$ docker run debian echo hello world
+$ docker run busybox echo hello world
+$ docker run mysql echo hello world
+$ docker run redis echo hello world
+----
+
+This will load the remainder of the base images we'll need throughout the workshop.
