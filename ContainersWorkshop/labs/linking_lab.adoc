@@ -1,0 +1,46 @@
+= Lab XX - Working with Docker Links
+
+In this lab we'll experiment with Docker Links.
+Links provide two main capabilities:
+
+- they create a secure tunnel between two containers so that one container can securely use the services of another
+- they inject environment variables into the client container identifying the protocol, IP address, and port via which the secure tunnel can be accessed.
+
+In this lab, we'll create a Redis server in one container, and then we'll access it from another container via a Docker link.
+
+. Create a container with a running Redis server:
++
+----
+$ docker run --name my-redis -d redis redis-server
+----
+
+. Create an interactive container running a Bash shell using the same Redis image. This will give us a Redis command-line client:
++
+----
+$ docker run --rm -it --link my-redis:redis redis /bin/bash
+----
++
+This client uses the `--link` flag to create a Docker link to the `my-redis` container with an alias of `redis`.
+
+. At the container shell prompt, look at the environment variables created by the Docker link:
++
+----
+$ env | grep REDIS_PORT
+REDIS_PORT_6379_TCP_PROTO=tcp
+REDIS_PORT_6379_TCP_ADDR=172.17.0.19
+REDIS_PORT_6379_TCP_PORT=6379
+REDIS_PORT_6379_TCP=tcp://172.17.0.19:6379
+REDIS_PORT=tcp://172.17.0.19:6379
+----
++
+
+. At the container shell prompt, use the Docker link environment variables to create a connection to Redis:
++
+----
+$ redis-cli -h $REDIS_PORT_6379_TCP_ADDR -p $REDIS_PORT_6379_TCP_PORT
+172.17.0.19:6379> set hello world
+OK
+172.17.0.19:6379> get hello
+"world"
+172.17.0.19:6379> exit
+----
