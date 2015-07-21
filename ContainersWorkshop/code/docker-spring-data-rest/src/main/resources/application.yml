@@ -1,0 +1,23 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+---
+
+spring:
+  profiles: default
+  jpa:
+    database: HSQL
+
+---
+
+spring:
+  profiles: docker
+  jpa:
+    database: MYSQL
+  datasource:
+      url: jdbc:mysql://${mysql.port.3306.tcp.addr}:${mysql.port.3306.tcp.port}/languages
+      username: ${mysql.username}
+      password: ${mysql.password}
+      driver-class-name: com.mysql.jdbc.Driver
