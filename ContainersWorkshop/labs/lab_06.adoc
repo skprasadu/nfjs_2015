@@ -1,4 +1,4 @@
-= Lab XX - Working with Docker Volumes
+= Lab 6 - Working with Docker Volumes
 
 In this lab we'll experiment with Docker Volumes.
 Volumes are directories within one or more containers that bypass the Union File System.

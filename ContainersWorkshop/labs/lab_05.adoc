@@ -1,4 +1,4 @@
-= Lab XX - Working with Docker Links
+= Lab 5 - Working with Docker Links
 
 In this lab we'll experiment with Docker Links.
 Links provide two main capabilities:
