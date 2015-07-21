@@ -1,3 +1,108 @@
 = Lab 8 - Spring Boot + Docker + Maven
 
-TODO
+In this lab we'll use Spotify's https://github.com/spotify/docker-maven-plugin[Maven plugin] to facilitate our Docker image building.
+
+NOTE: A https://github.com/Transmode/gradle-docker[Gradle plugin] (from Transmode) also exists, but I do not have any practical experience with it. You can learn more about it https://spring.io/guides/gs/spring-boot-docker/[here].
+
+You'll find the configuration for the Docker Maven plugin at `ContainersWorkshop/code/docker-spring-data-rest/pom.xml`:
+
+====
+[source,xml]
+----
+include::../code/docker-spring-data-rest/pom.xml[tags=docker_plugin,indent=0]
+----
+<1> We have specified that the resulting image should be tagged `docker-spring-boot`.
+<2> We tell the plugin to use a `Dockerfile` at the `dockerDirectory` location.
+====
+
+. Build the project and image using Maven (if you don't have Maven, grab it from http://maven.apache.org/download.cgi):
++
+----
+$ cd ContainersWorkshop/code/docker-spring-data-rest
+$ mvn clean package docker:build
+[INFO] Scanning for projects...
+[INFO]
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         [INFO] ------------------------------------------------------------------------
+[INFO] Building docker-spring-data-rest 0.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+
+...
+
+[INFO] --- docker-maven-plugin:0.2.11:build (default-cli) @ docker-spring-data-rest ---
+[INFO] Copying /Users/pivotal/mstine/2015/NFJS/ContainersWorkshop/code/docker-spring-data-rest/target/docker-spring-data-rest-0.0.1-SNAPSHOT.jar -> /Users/pivotal/mstine/2015/NFJS/ContainersWorkshop/code/docker-spring-data-rest/target/docker/docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+[INFO] Copying src/main/docker/Dockerfile -> /Users/pivotal/mstine/2015/NFJS/ContainersWorkshop/code/docker-spring-data-rest/target/docker/Dockerfile
+[INFO] Building image docker-spring-boot
+Step 0 : FROM java:8
+---> 49ebfec495e1
+Step 1 : ADD docker-spring-data-rest-0.0.1-SNAPSHOT.jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+---> 22043e32addc
+Removing intermediate container 3cf792d20638
+Step 2 : ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+---> Running in 80acc1b156d6
+---> f28f9c26db12
+Removing intermediate container 80acc1b156d6
+Successfully built f28f9c26db12
+[INFO] Built docker-spring-boot
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 20.506 s
+[INFO] Finished at: 2015-07-21T08:12:44-07:00
+[INFO] Final Memory: 36M/149M
+[INFO] ------------------------------------------------------------------------
+----
++
+Notice the interaction with Docker at the end of the Maven output.
+
+. Run the application in a new Docker container, exposing port 8080:
++
+----
+$ docker run -p 8080:8080 docker-spring-boot
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.2.5.RELEASE)
+
+2015-07-21 13:27:37.938  INFO 1 --- [           main] c.d.d.DockerSpringDataRestApplication    : Starting DockerSpringDataRestApplication v0.0.1-SNAPSHOT on
+b83f52bb66a3 with PID 1 (/docker-spring-data-rest-0.0.1-SNAPSHOT.jar started by root in /)
+----
+
+. Access the application using your boot2docker IP using cURL or in a browser:
++
+----
+$ curl -i http://192.168.59.103:8080/languages
+HTTP/1.1 200 OKServer: Apache-Coyote/1.1
+X-Application-Context: application
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunkedDate: Tue, 21 Jul 2015 13:31:11 GMT
+
+{
+  "_links" : {
+    "self" : {
+      "href" : "http://192.168.59.103:8080/languages{?page,size,sort}",
+      "templated" : true
+    }
+  },
+  "_embedded" : {
+    "languages" : [ {
+      "name" : "Java",
+      "creator" : "Gosling",
+      "_links" : {        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/1"
+        }
+      }
+    }, {
+      "name" : "Perl",
+      "creator" : "Wall",
+      "_links" : {
+        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/2"
+        }
+      }
+      ...
+----

@@ -686,12 +686,165 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we&#8217;ll use Spotify&#8217;s <a href="https://github.com/spotify/docker-maven-plugin">Maven plugin</a> to facilitate our Docker image building.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+A <a href="https://github.com/Transmode/gradle-docker">Gradle plugin</a> (from Transmode) also exists, but I do not have any practical experience with it. You can learn more about it <a href="https://spring.io/guides/gs/spring-boot-docker/">here</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You&#8217;ll find the configuration for the Docker Maven plugin at <code>ContainersWorkshop/code/docker-spring-data-rest/pom.xml</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;com.spotify&lt;/groupId&gt;
+    &lt;artifactId&gt;docker-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;0.2.11&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;imageName&gt;docker-spring-boot&lt;/imageName&gt; <b class="conum">(1)</b>
+        &lt;dockerDirectory&gt;src/main/docker&lt;/dockerDirectory&gt; <b class="conum">(2)</b>
+        &lt;!-- copy the service's jar file from target into the root directory of the image --&gt;
+        &lt;resources&gt;
+            &lt;resource&gt;
+                &lt;targetPath&gt;/&lt;/targetPath&gt;
+                &lt;directory&gt;${project.build.directory}&lt;/directory&gt;
+                &lt;include&gt;${project.build.finalName}.jar&lt;/include&gt;
+            &lt;/resource&gt;
+        &lt;/resources&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>We have specified that the resulting image should be tagged <code>docker-spring-boot</code>.</p>
+</li>
+<li>
+<p>We tell the plugin to use a <code>Dockerfile</code> at the <code>dockerDirectory</code> location.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Build the project and image using Maven (if you don&#8217;t have Maven, grab it from <a href="http://maven.apache.org/download.cgi" class="bare">http://maven.apache.org/download.cgi</a>):</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd ContainersWorkshop/code/docker-spring-data-rest
+$ mvn clean package docker:build
+[INFO] Scanning for projects...
+[INFO]
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         [INFO] ------------------------------------------------------------------------
+[INFO] Building docker-spring-data-rest 0.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+
+...
+
+[INFO] --- docker-maven-plugin:0.2.11:build (default-cli) @ docker-spring-data-rest ---
+[INFO] Copying /Users/pivotal/mstine/2015/NFJS/ContainersWorkshop/code/docker-spring-data-rest/target/docker-spring-data-rest-0.0.1-SNAPSHOT.jar -&gt; /Users/pivotal/mstine/2015/NFJS/ContainersWorkshop/code/docker-spring-data-rest/target/docker/docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+[INFO] Copying src/main/docker/Dockerfile -&gt; /Users/pivotal/mstine/2015/NFJS/ContainersWorkshop/code/docker-spring-data-rest/target/docker/Dockerfile
+[INFO] Building image docker-spring-boot
+Step 0 : FROM java:8
+---&gt; 49ebfec495e1
+Step 1 : ADD docker-spring-data-rest-0.0.1-SNAPSHOT.jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+---&gt; 22043e32addc
+Removing intermediate container 3cf792d20638
+Step 2 : ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+---&gt; Running in 80acc1b156d6
+---&gt; f28f9c26db12
+Removing intermediate container 80acc1b156d6
+Successfully built f28f9c26db12
+[INFO] Built docker-spring-boot
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 20.506 s
+[INFO] Finished at: 2015-07-21T08:12:44-07:00
+[INFO] Final Memory: 36M/149M
+[INFO] ------------------------------------------------------------------------</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice the interaction with Docker at the end of the Maven output.</p>
+</div>
+</li>
+<li>
+<p>Run the application in a new Docker container, exposing port 8080:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker run -p 8080:8080 docker-spring-boot
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.2.5.RELEASE)
+
+2015-07-21 13:27:37.938  INFO 1 --- [           main] c.d.d.DockerSpringDataRestApplication    : Starting DockerSpringDataRestApplication v0.0.1-SNAPSHOT on
+b83f52bb66a3 with PID 1 (/docker-spring-data-rest-0.0.1-SNAPSHOT.jar started by root in /)</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the application using your boot2docker IP using cURL or in a browser:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ curl -i http://192.168.59.103:8080/languages
+HTTP/1.1 200 OKServer: Apache-Coyote/1.1
+X-Application-Context: application
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunkedDate: Tue, 21 Jul 2015 13:31:11 GMT
+
+{
+  "_links" : {
+    "self" : {
+      "href" : "http://192.168.59.103:8080/languages{?page,size,sort}",
+      "templated" : true
+    }
+  },
+  "_embedded" : {
+    "languages" : [ {
+      "name" : "Java",
+      "creator" : "Gosling",
+      "_links" : {        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/1"
+        }
+      }
+    }, {
+      "name" : "Perl",
+      "creator" : "Wall",
+      "_links" : {
+        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/2"
+        }
+      }
+      ...</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-21 05:37:16 MDT
+Last updated 2015-07-21 08:15:31 MDT
 </div>
 </div>
 </body>
