@@ -67,7 +67,7 @@
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.2.11</version>
 				<configuration>
-					<imageName>mstine/hello-docker-world</imageName>
+					<imageName>mstine/docker-spring-data-rest</imageName>
 					<dockerDirectory>src/main/docker</dockerDirectory>
 					<!-- copy the service's jar file from target into the root directory of the image -->
 					<resources>
