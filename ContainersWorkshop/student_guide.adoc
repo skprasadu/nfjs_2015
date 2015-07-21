@@ -22,8 +22,8 @@ mstine@pivotal.io
 
 * link:setup.html[Laptop Environment Setup]
 * Intro Lecture (link:slides/intro.pdf[Slides])
-** link:labs/lab_01.html[Lab 1 - ???]
-** link:labs/lab_02.html[Lab 2 - ???]
+** link:labs/lab_01.html[Lab 1 - Hello Docker!]
+** link:labs/lab_02.html[Lab 2 - Getting to Know the Docker CLI]
 ** link:labs/lab_03.html[Lab 3 - ???]
 ** link:labs/lab_04.html[Lab 4 - ???]
 ** link:labs/lab_05.html[Lab 5 - ???]
