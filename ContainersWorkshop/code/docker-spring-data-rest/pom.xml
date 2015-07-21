@@ -62,13 +62,14 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- tag::docker_plugin[] -->
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.2.11</version>
 				<configuration>
-					<imageName>mstine/docker-spring-data-rest</imageName>
-					<dockerDirectory>src/main/docker</dockerDirectory>
+					<imageName>docker-spring-boot</imageName> <!--1-->
+					<dockerDirectory>src/main/docker</dockerDirectory> <!--2-->
 					<!-- copy the service's jar file from target into the root directory of the image -->
 					<resources>
 						<resource>
@@ -79,6 +80,7 @@
 					</resources>
 				</configuration>
 			</plugin>
+			<!-- end::docker_plugin[] -->
 		</plugins>
 	</build>
 	
