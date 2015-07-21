@@ -1,3 +1,79 @@
 # Lab 3 - Build Your First Image
 
-TODO
+In this lab we are going to build and test a Docker image for http://redis.io/[Redis].
+
+NOTE: An official Redis image exists, and we'll use it later. However, the image we're creating now is strictly for training purposes.
+
+. At a Docker-enabled terminal, run a new interactive container based on the `debian` image:
++
+----
+$ docker run -it debian /bin/bash
+----
+
+. At the container shell, update the system package listing:
++
+----
+$ apt-get update
+----
+
+. Next, install the Redis package:
++
+----
+$ apt-get install -y redis-server
+----
+
+. Start the Redis service:
++
+----
+$ /etc/init.d/redis-server start
+----
+
+. Connect to Redis using `redis-cli` and test the server:
++
+----
+$ redis-cli
+127.0.0.1:6379> set hello world
+OK
+127.0.0.1:6379> get hello
+"world"
+127.0.0.1:6379> exit
+----
+
+. In a separate Docker-enabled terminal window, `commit` the image:
++
+----
+$ docker ps -q
+5588772cfe60
+
+$ docker commit 5588772cfe60 <your docker hub username>/redis
+----
+
+. Exit the container shell, terminating the container.
++
+----
+$ exit
+exit
+----
+
+. Start a new container based on the image you just commited, expose port 6379, and start the `redis-server` process:
++
+----
+$ docker run -d -p 6379:6379 mstine/redis /usr/bin/redis-server
+----
+
+. From a separate terminal window, identify your boot2docker IP address and telnet to the Redis server instance:
++
+----
+$ boot2docker ip
+192.168.59.103
+
+$ telnet 192.168.59.103 6379
+Trying 192.168.59.103...
+Connected to 192.168.59.103.
+Escape character is '^]'.
+set hello nfjs
++OK
+get hello
+$4
+nfjs
+----

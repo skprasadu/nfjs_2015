@@ -686,12 +686,120 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we are going to build and test a Docker image for <a href="http://redis.io/">Redis</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+An official Redis image exists, and we&#8217;ll use it later. However, the image we&#8217;re creating now is strictly for training purposes.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>At a Docker-enabled terminal, run a new interactive container based on the <code>debian</code> image:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker run -it debian /bin/bash</pre>
+</div>
+</div>
+</li>
+<li>
+<p>At the container shell, update the system package listing:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ apt-get update</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Next, install the Redis package:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ apt-get install -y redis-server</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start the Redis service:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ /etc/init.d/redis-server start</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Connect to Redis using <code>redis-cli</code> and test the server:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ redis-cli
+127.0.0.1:6379&gt; set hello world
+OK
+127.0.0.1:6379&gt; get hello
+"world"
+127.0.0.1:6379&gt; exit</pre>
+</div>
+</div>
+</li>
+<li>
+<p>In a separate Docker-enabled terminal window, <code>commit</code> the image:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker ps -q
+5588772cfe60
+
+$ docker commit 5588772cfe60 &lt;your docker hub username&gt;/redis</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Exit the container shell, terminating the container.</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ exit
+exit</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start a new container based on the image you just commited, expose port 6379, and start the <code>redis-server</code> process:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker run -d -p 6379:6379 mstine/redis /usr/bin/redis-server</pre>
+</div>
+</div>
+</li>
+<li>
+<p>From a separate terminal window, identify your boot2docker IP address and telnet to the Redis server instance:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ boot2docker ip
+192.168.59.103
+
+$ telnet 192.168.59.103 6379
+Trying 192.168.59.103...
+Connected to 192.168.59.103.
+Escape character is '^]'.
+set hello nfjs
++OK
+get hello
+$4
+nfjs</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-21 05:36:33 MDT
+Last updated 2015-07-21 06:03:52 MDT
 </div>
 </div>
 </body>
