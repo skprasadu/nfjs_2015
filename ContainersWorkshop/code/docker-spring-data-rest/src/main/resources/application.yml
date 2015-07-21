@@ -21,3 +21,15 @@ spring:
       username: ${mysql.username}
       password: ${mysql.password}
       driver-class-name: com.mysql.jdbc.Driver
+
+---
+
+spring:
+  profiles: lattice
+  jpa:
+    database: MYSQL
+  datasource:
+      url: jdbc:mysql://192.168.59.103:32772/languages
+      username: ${mysql.username}
+      password: ${mysql.password}
+      driver-class-name: com.mysql.jdbc.Driver
