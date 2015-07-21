@@ -685,13 +685,53 @@ b.conum * { color: inherit !important; }
 <h1>Lab 10 - Deploying to Lattice</h1>
 </div>
 <div id="content">
-<div class="paragraph">
-<p>TODO</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Normally we would run MySQL on Lattice as well, but Pivotal is tracking a bug preventing that: <a href="https://github.com/cloudfoundry-incubator/lattice/issues/149" class="bare">https://github.com/cloudfoundry-incubator/lattice/issues/149</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run a MySQL container using Docker regularly:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker run --name my-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_DATABASE=languages -e MYSQL_USER=languages -e MYSQL_PASSWORD=password -p 3306:3306 -d mysql</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make sure ltc is targeted:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ ltc target 192.168.11.11.xip.io</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Deploy the Spring Boot app to Lattice:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ ltc create -e SPRING_PROFILES_ACTIVE=docker -e MYSQL_PORT_3306_TCP_ADDR=$(boot2docker ip) -e MYSQL_PORT_3306_TCP_PORT=3306 -e MYSQL_USERNAME=languages -e MYSQL_PASSWORD=password -m 512 web mstine/docker-spring-data-rest</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Hit the application at <a href="http://web.192.168.11.11.xip.io/languages" class="bare">http://web.192.168.11.11.xip.io/languages</a>.</p>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-21 05:37:41 MDT
+Last updated 2015-07-21 17:17:56 MDT
 </div>
 </div>
 </body>
