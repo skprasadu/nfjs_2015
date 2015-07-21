@@ -686,12 +686,229 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we&#8217;re going to deploy the same Spring Boot application again, but this time we will persist the data in a MySQL container. We&#8217;ll use Docker Compose to facilitate spinning up the two containers and linking them as a unit.</p>
+</div>
+<div class="paragraph">
+<p>You&#8217;ll find the Docker Compose config at <code>ContainersWorkshop/code/compose/docker-compose.yml</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">mysql: <b class="conum">(1)</b>
+  image: mysql <b class="conum">(2)</b>
+  environment:
+    MYSQL_ROOT_PASSWORD: my-secret-pw <b class="conum">(3)</b>
+    MYSQL_DATABASE: languages <b class="conum">(4)</b>
+    MYSQL_USER: languages
+    MYSQL_PASSWORD: password
+web: <b class="conum">(5)</b>
+  image: docker-spring-boot <b class="conum">(6)</b>
+  ports:
+    - "8080:8080" <b class="conum">(7)</b>
+  links:
+    - mysql <b class="conum">(8)</b>
+  environment:
+    SPRING_PROFILES_ACTIVE: docker <b class="conum">(9)</b>
+    MYSQL_USERNAME: languages
+    MYSQL_PASSWORD: password</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>First we specify a container to be named <code>mysql</code>.</p>
+</li>
+<li>
+<p>The <code>mysql</code> container will be based on the <code>mysql</code> image (latest implied).</p>
+</li>
+<li>
+<p>The <code>mysql</code> image requires that we either explicitly specify (via environment variables) a root password for the database or that we explicitly specify that the root password should be blank. We choose the former.</p>
+</li>
+<li>
+<p>The <code>mysql</code> image will create a default DB on startup, with a default user and password. The next 3 environment variables accomplish that.</p>
+</li>
+<li>
+<p>Next we specify a container to be named <code>web</code>.</p>
+</li>
+<li>
+<p>The <code>web</code> container will be based on the <code>docker-spring-boot</code> image we created in the earlier labs.</p>
+</li>
+<li>
+<p>We expose port 8080 to allow us to talk to our application.</p>
+</li>
+<li>
+<p>We create a link to the <code>mysql</code> container for data persistence.</p>
+</li>
+<li>
+<p>We set 3 environment variables. <code>SPRING_PROFILES_ACTIVE: docker</code> turns on a profile that tells our app to look for Docker link variables for the IP and Port for MySQL. The other 2 variables specify the username and password.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>You can look at <code>ContainersWorkshop/code/docker-spring-data-rest/src/main/resources/application.yml</code> to see how the <code>docker</code> profile configures the Spring app:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">spring:
+  profiles: docker
+  jpa:
+    database: MYSQL
+  datasource:
+      url: jdbc:mysql://${mysql.port.3306.tcp.addr}:${mysql.port.3306.tcp.port}/languages <b class="conum">(1)</b>
+      username: ${mysql.username} <b class="conum">(2)</b>
+      password: ${mysql.password}
+      driver-class-name: com.mysql.jdbc.Driver</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>We&#8217;re using Spring Boot&#8217;s ability to interpolate environment variables to pull in the Docker link IP and Port.</p>
+</li>
+<li>
+<p>We&#8217;re doing the same to pull in the environment variables we set manually to get the username and password.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Boot just the MySQL container using Docker Compose:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd ContainersWorkshop/code/compose
+$ docker-compose up mysql
+Creating compose_mysql_1...
+Attaching to compose_mysql_1
+mysql_1 | Running mysql_install_db
+
+...
+
+mysql_1 | 2015-07-21 22:26:58 1 [Note] Event Scheduler: Loaded 0 events
+mysql_1 | 2015-07-21 22:26:58 1 [Note] mysqld: ready for connections.
+mysql_1 | Version: '5.6.25'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server (GPL)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The MySQL DB image goes through an initialization process that starts and stops the server a few times. If we tried to start the Spring Boot app at the same time, the connection would fail when the app tries to start.</p>
+</div>
+</li>
+<li>
+<p>Use <code>CTRL-C</code> to stop the MySQL image.</p>
+</li>
+<li>
+<p>Use Docker Compose to start both the DB and app:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker-compose up
+
+...
+
+web_1   | 2015-07-21 22:29:00.534  INFO 1 --- [           main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 0
+web_1   | 2015-07-21 22:29:00.732  INFO 1 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+web_1   | 2015-07-21 22:29:00.734  INFO 1 --- [           main] c.d.d.DockerSpringDataRestApplication    : Started DockerSpringDataRestApplication in 10.287 seconds (JVM running for 11.123)</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the application using your boot2docker IP using cURL or in a browser:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ curl -i http://192.168.59.103:8080/languages
+HTTP/1.1 200 OKServer: Apache-Coyote/1.1
+X-Application-Context: application
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunkedDate: Tue, 21 Jul 2015 13:31:11 GMT
+
+{
+  "_links" : {
+    "self" : {
+      "href" : "http://192.168.59.103:8080/languages{?page,size,sort}",
+      "templated" : true
+    }
+  },
+  "_embedded" : {
+    "languages" : [ {
+      "name" : "Java",
+      "creator" : "Gosling",
+      "_links" : {
+          "self" : {
+          "href" : "http://192.168.59.103:8080/languages/1"
+        }
+      }
+    }, {
+      "name" : "Perl",
+      "creator" : "Wall",
+      "_links" : {
+        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/2"
+        }
+      }
+      ...</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Run a MySQL client container to show that the data is in fact in MySQL:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker run -it --link compose_mysql_1:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot
+ -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'                                                                                                           Warning: Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 11
+Server version: 5.6.25 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql&gt; use languages;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql&gt; select * from languages;
++----+---------+---------+
+| id | creator | name    |
++----+---------+---------+
+|  1 | Gosling | Java    |
+|  2 | Wall    | Perl    |
+|  3 | Matz    | Ruby    |
+|  4 | Rich    | Clojure |
++----+---------+---------+
+4 rows in set (0.00 sec)</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Shutdown the apps using <code>CTRL-C</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>^CGracefully stopping... (press Ctrl+C again to force)
+Stopping compose_web_1...
+Stopping compose_mysql_1...
+
+Aborting.</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-21 05:37:27 MDT
+Last updated 2015-07-21 16:34:50 MDT
 </div>
 </div>
 </body>
