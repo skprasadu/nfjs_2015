@@ -1,3 +1,119 @@
 = Lab 7 - Spring Boot + Docker
 
-TODO
+In this lab we'll take a pre-built http://projects.spring.io/spring-boot/[Spring Boot] application, one which uses http://projects.spring.io/spring-data-rest/[Spring Data REST] to expose a REST API for data about programming languages, and package it into a container image using a Dockerfile.
+
+The code for the app is found at `ContainersWorkshop/code/docker-spring-data-rest`.
+
+As you can see in `src/main/java/com/deepsouthcloud/docker/languages/Language.java`, we're going to represent programming languages and their creators using JPA:
+
+[source,java]
+----
+include::../code/docker-spring-data-rest/src/main/java/com/deepsouthcloud/docker/languages/Language.java[tags=language_entity]
+----
+
+The REST API is exposed by `src/main/java/com/deepsouthcloud/docker/languages/LanguageRepository.java`:
+
+[source,java]
+----
+include::../code/docker-spring-data-rest/src/main/java/com/deepsouthcloud/docker/languages/LanguageRepository.java[tags=language_repository]
+----
+
+And a main application class at `src/main/java/com/deepsouthcloud/docker/DockerSpringDataRestApplication.java` ties it all together:
+
+[source,java]
+----
+include::../code/docker-spring-data-rest/src/main/java/com/deepsouthcloud/docker/DockerSpringDataRestApplication.java[tags=language_bootstrap]
+----
+
+We get our data automatically imported from `src/main/resources/import.sql`:
+
+[source,sql]
+----
+include::../code/docker-spring-data-rest/src/main/resources/import.sql[]
+----
+
+. Build the application using Maven (if you don't have Maven, grab it from http://maven.apache.org/download.cgi):
++
+----
+$ cd ContainersWorkshop/code/docker-spring-data-rest
+$ mvn package
+----
+
+. A basic Dockerfile is included at the root of the project:
++
+----
+include::../code/docker-spring-data-rest/Dockerfile[]
+----
++
+Build a Docker image using it:
++
+====
+----
+$ docker build -t docker-spring-boot .
+Sending build context to Docker daemon 30.22 MB
+Sending build context to Docker daemon
+Step 0 : FROM java:8
+ ---> 49ebfec495e1
+Step 1 : ADD target/docker-spring-data-rest-0.0.1-SNAPSHOT.jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+ ---> 0e93b2b85682
+Removing intermediate container 0ecf64b15383
+Step 2 : ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar <1>
+ ---> Running in ac7433951b27
+ ---> 887da4b4795d
+Removing intermediate container ac7433951b27
+Successfully built 887da4b4795d
+----
+<1> To reduce http://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source[Tomcat startup time] we added a system property pointing to "/dev/urandom" as a source of entropy.
+====
+
+. Run the application in a new Docker container, exposing port 8080:
++
+----
+$ docker run -p 8080:8080 docker-spring-boot
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.2.5.RELEASE)
+
+2015-07-21 13:27:37.938  INFO 1 --- [           main] c.d.d.DockerSpringDataRestApplication    : Starting DockerSpringDataRestApplication v0.0.1-SNAPSHOT on
+b83f52bb66a3 with PID 1 (/docker-spring-data-rest-0.0.1-SNAPSHOT.jar started by root in /)
+----
+
+. Access the application using your boot2docker IP using cURL or in a browser:
++
+----
+$ curl -i http://192.168.59.103:8080/languages
+HTTP/1.1 200 OKServer: Apache-Coyote/1.1
+X-Application-Context: application
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunkedDate: Tue, 21 Jul 2015 13:31:11 GMT
+
+{
+  "_links" : {
+    "self" : {
+      "href" : "http://192.168.59.103:8080/languages{?page,size,sort}",
+      "templated" : true
+    }
+  },
+  "_embedded" : {
+    "languages" : [ {
+      "name" : "Java",
+      "creator" : "Gosling",
+      "_links" : {        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/1"
+        }
+      }
+    }, {
+      "name" : "Perl",
+      "creator" : "Wall",
+      "_links" : {
+        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/2"
+        }
+      }
+      ...
+----

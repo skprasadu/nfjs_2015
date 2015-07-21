@@ -686,12 +686,180 @@ b.conum * { color: inherit !important; }
 </div>
 <div id="content">
 <div class="paragraph">
-<p>TODO</p>
+<p>In this lab we&#8217;ll take a pre-built <a href="http://projects.spring.io/spring-boot/">Spring Boot</a> application, one which uses <a href="http://projects.spring.io/spring-data-rest/">Spring Data REST</a> to expose a REST API for data about programming languages, and package it into a container image using a Dockerfile.</p>
+</div>
+<div class="paragraph">
+<p>The code for the app is found at <code>ContainersWorkshop/code/docker-spring-data-rest</code>.</p>
+</div>
+<div class="paragraph">
+<p>As you can see in <code>src/main/java/com/deepsouthcloud/docker/languages/Language.java</code>, we&#8217;re going to represent programming languages and their creators using JPA:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@Entity
+@Table(name = "languages")
+public class Language {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
+    private String creator;
+
+    // ...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The REST API is exposed by <code>src/main/java/com/deepsouthcloud/docker/languages/LanguageRepository.java</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@RepositoryRestResource
+public interface LanguageRepository extends PagingAndSortingRepository&lt;Language, Long&gt; {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And a main application class at <code>src/main/java/com/deepsouthcloud/docker/DockerSpringDataRestApplication.java</code> ties it all together:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java">@SpringBootApplication
+@EnableJpaRepositories
+@Import(RepositoryRestMvcConfiguration.class)
+public class DockerSpringDataRestApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DockerSpringDataRestApplication.class, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We get our data automatically imported from <code>src/main/resources/import.sql</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sql" data-lang="sql">insert into languages (name, creator) values ('Java', 'Gosling');
+insert into languages (name, creator) values ('Perl', 'Wall');
+insert into languages (name, creator) values ('Ruby', 'Matz');
+insert into languages (name, creator) values ('Clojure', 'Rich');</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Build the application using Maven (if you don&#8217;t have Maven, grab it from <a href="http://maven.apache.org/download.cgi" class="bare">http://maven.apache.org/download.cgi</a>):</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cd ContainersWorkshop/code/docker-spring-data-rest
+$ mvn package</pre>
+</div>
+</div>
+</li>
+<li>
+<p>A basic Dockerfile is included at the root of the project:</p>
+<div class="listingblock">
+<div class="content">
+<pre>FROM java:8
+ADD target/docker-spring-data-rest-0.0.1-SNAPSHOT.jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/docker-spring-data-rest-0.0.1-SNAPSHOT.jar"]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Build a Docker image using it:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre>$ docker build -t docker-spring-boot .
+Sending build context to Docker daemon 30.22 MB
+Sending build context to Docker daemon
+Step 0 : FROM java:8
+ ---&gt; 49ebfec495e1
+Step 1 : ADD target/docker-spring-data-rest-0.0.1-SNAPSHOT.jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar
+ ---&gt; 0e93b2b85682
+Removing intermediate container 0ecf64b15383
+Step 2 : ENTRYPOINT java -Djava.security.egd=file:/dev/./urandom -jar /docker-spring-data-rest-0.0.1-SNAPSHOT.jar <b class="conum">(1)</b>
+ ---&gt; Running in ac7433951b27
+ ---&gt; 887da4b4795d
+Removing intermediate container ac7433951b27
+Successfully built 887da4b4795d</pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>To reduce <a href="http://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source">Tomcat startup time</a> we added a system property pointing to "/dev/urandom" as a source of entropy.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Run the application in a new Docker container, exposing port 8080:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ docker run -p 8080:8080 docker-spring-boot
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.2.5.RELEASE)
+
+2015-07-21 13:27:37.938  INFO 1 --- [           main] c.d.d.DockerSpringDataRestApplication    : Starting DockerSpringDataRestApplication v0.0.1-SNAPSHOT on
+b83f52bb66a3 with PID 1 (/docker-spring-data-rest-0.0.1-SNAPSHOT.jar started by root in /)</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the application using your boot2docker IP using cURL or in a browser:</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ curl -i http://192.168.59.103:8080/languages
+HTTP/1.1 200 OKServer: Apache-Coyote/1.1
+X-Application-Context: application
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunkedDate: Tue, 21 Jul 2015 13:31:11 GMT
+
+{
+  "_links" : {
+    "self" : {
+      "href" : "http://192.168.59.103:8080/languages{?page,size,sort}",
+      "templated" : true
+    }
+  },
+  "_embedded" : {
+    "languages" : [ {
+      "name" : "Java",
+      "creator" : "Gosling",
+      "_links" : {        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/1"
+        }
+      }
+    }, {
+      "name" : "Perl",
+      "creator" : "Wall",
+      "_links" : {
+        "self" : {
+          "href" : "http://192.168.59.103:8080/languages/2"
+        }
+      }
+      ...</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-21 05:37:01 MDT
+Last updated 2015-07-21 07:31:56 MDT
 </div>
 </div>
 </body>
