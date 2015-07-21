@@ -12,15 +12,17 @@ spring:
 
 ---
 
+# tag::spring_profile_docker[]
 spring:
   profiles: docker
   jpa:
     database: MYSQL
   datasource:
-      url: jdbc:mysql://${mysql.port.3306.tcp.addr}:${mysql.port.3306.tcp.port}/languages
-      username: ${mysql.username}
+      url: jdbc:mysql://${mysql.port.3306.tcp.addr}:${mysql.port.3306.tcp.port}/languages # <1>
+      username: ${mysql.username} # <2>
       password: ${mysql.password}
       driver-class-name: com.mysql.jdbc.Driver
+# end::spring_profile_docker[]
 
 ---
 
