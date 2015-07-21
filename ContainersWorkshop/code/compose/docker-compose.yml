@@ -1,0 +1,17 @@
+mysql:
+  image: mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: my-secret-pw
+    MYSQL_DATABASE: languages
+    MYSQL_USER: languages
+    MYSQL_PASSWORD: password
+web:
+  image: mstine/hello-docker-world
+  ports:
+    - "8080:8080"
+  links:
+    - mysql
+  environment:
+    SPRING_PROFILES_ACTIVE: docker
+    MYSQL_USERNAME: languages
+    MYSQL_PASSWORD: password
