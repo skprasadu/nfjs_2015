@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
 
+// tag::language_bootstrap[]
 @SpringBootApplication
 @EnableJpaRepositories
 @Import(RepositoryRestMvcConfiguration.class)
@@ -15,3 +16,4 @@ public class DockerSpringDataRestApplication {
         SpringApplication.run(DockerSpringDataRestApplication.class, args);
     }
 }
+// end::language_bootstrap[]

@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+// tag::language_entity[]
 @Entity
 @Table(name = "languages")
 public class Language {
@@ -14,6 +15,9 @@ public class Language {
     private Long id;
     private String name;
     private String creator;
+
+    // ...
+// end::language_entity[]
 
     public Long getId() {
         return id;
