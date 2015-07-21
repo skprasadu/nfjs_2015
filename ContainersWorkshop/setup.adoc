@@ -49,7 +49,10 @@ Docker Compose is not yet supported natively on Windows. To run on Windows, you 
 . Install *Lattice* by following the instructions found http://lattice.cf/docs/getting-started/[here]. You will need to complete the following sections of the _Getting Started_ page:
 * Pre-Requisites for the Vagrant VM (if you installed Docker first, you should be OK here)
 * Starting the Lattice Vagrant VM
+** In this section, replace `git checkout master` with `git checkout v0.2.6`.
 * Fetching ltc - the Lattice CLI
+** Make sure you download ltc v0.2.6 from https://github.com/cloudfoundry-incubator/lattice/releases/tag/v0.2.6
+** If you are running on Windows, `vagrant ssh` into your Lattice VM and use `ltc` from there.
 
 == Warm Your Docker Cache
 
