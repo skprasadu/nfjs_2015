@@ -58,7 +58,7 @@ exit
 . Start a new container based on the image you just commited, expose port 6379, and start the `redis-server` process:
 +
 ----
-$ docker run -d -p 6379:6379 mstine/redis /usr/bin/redis-server
+$ docker run -d -p 6379:6379 <your docker hub username>/redis /usr/bin/redis-server
 ----
 
 . From a separate terminal window, identify your boot2docker IP address and telnet to the Redis server instance:
