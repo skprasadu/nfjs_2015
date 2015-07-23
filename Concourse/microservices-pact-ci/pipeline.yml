@@ -1,0 +1,126 @@
+---
+jobs:
+- name: generate-pact
+  public: true
+  serial: true
+  plan:
+  - get: microservices-pact
+    trigger: true
+  - get: foo-consumer-version
+    params: {bump: minor, pre: alpha}
+  - task: generate-pact
+    file: microservices-pact/microservices-pact-consumer/task.yml
+  - put: pact
+    params: {from: microservices-pact-consumer/target/pacts/Foo_Consumer-Foo_Provider.json}
+  - put: foo-consumer
+    params: {from: microservices-pact-consumer/build/libs/microservices-pact-consumer-.*.jar$}
+  - put: foo-consumer-version
+    params: {file: foo-consumer-version/number}
+
+- name: deploy-consumer
+  public: true
+  serial: true
+  plan:
+  - get: foo-consumer
+    trigger: true
+    passed: [generate-pact]
+  - get: microservices-pact
+    passed: [generate-pact]
+  - get: foo-consumer-version
+  - task: filter-manifest
+    file: microservices-pact/microservices-pact-consumer/filterManifest.yml
+  - put: pws-deploy
+    params:
+      manifest: filter-manifest/microservices-pact-consumer/versioned-manifest/manifest.yml
+
+- name: verify-pact
+  public: true
+  serial: true
+  plan:
+  - get: microservices-pact
+    passed: [generate-pact]
+    trigger: true
+  - get: foo-provider-version
+    params: {bump: minor, pre: alpha}
+  - get: pact
+    trigger: true
+  - task: verify-pact
+    file: microservices-pact/microservices-pact-provider/task.yml
+  - put: foo-provider
+    params: {from: microservices-pact-provider/build/libs/microservices-pact-provider-.*.jar$}
+  - put: foo-provider-version
+    params: {file: foo-provider-version/number}
+
+- name: deploy-provider
+  public: true
+  serial: true
+  plan:
+  - get: foo-provider
+    trigger: true
+    passed: [verify-pact]
+  - get: microservices-pact
+    passed: [verify-pact]
+  - get: foo-provider-version
+  - task: filter-manifest
+    file: microservices-pact/microservices-pact-provider/filterManifest.yml
+  - put: pws-deploy
+    params:
+      manifest: filter-manifest/microservices-pact-provider/versioned-manifest/manifest.yml
+
+resources:
+- name: microservices-pact
+  type: git
+  source:
+    uri: https://github.com/mstine/microservices-pact.git
+
+- name: pact
+  type: s3
+  source:
+    access_key_id: {{access_key_id}}
+    secret_access_key: {{secret_access_key}}
+    bucket: concourse-pact
+    versioned_file: Foo_Consumer-Foo_Provider.json
+
+- name: foo-consumer-version
+  type: semver
+  source:
+    bucket: concourse-pact
+    key: foo-consumer-version
+    access_key_id: {{access_key_id}}
+    secret_access_key: {{secret_access_key}}
+    initial_version: 0.1.0
+
+- name: foo-consumer
+  type: s3
+  source:
+    access_key_id: {{access_key_id}}
+    secret_access_key: {{secret_access_key}}
+    bucket: concourse-pact
+    regexp: microservices-pact-consumer-.*.jar$
+
+- name: foo-provider-version
+  type: semver
+  source:
+    bucket: concourse-pact
+    key: foo-provider-version
+    access_key_id: {{access_key_id}}
+    secret_access_key: {{secret_access_key}}
+    initial_version: 0.1.0
+
+- name: foo-provider
+  type: s3
+  source:
+    access_key_id: {{access_key_id}}
+    secret_access_key: {{secret_access_key}}
+    bucket: concourse-pact
+    regexp: microservices-pact-provider-.*.jar$
+
+- name: pws-deploy
+  type: cf
+  source:
+    api: https://api.run.pivotal.io
+    username: mstine@pivotal.io
+    password: {{pws_password}}
+    organization: platform-eng
+    space: concourse-demo
+    skip_cert_check: false

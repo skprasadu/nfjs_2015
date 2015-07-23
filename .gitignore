@@ -8,3 +8,4 @@ target
 *.iws
 scratch
 tools
+credentials.yml
