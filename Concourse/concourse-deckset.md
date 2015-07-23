@@ -47,10 +47,16 @@ FREE - Compliments of Pivotal
 
 # [fit] Usability
 
+^ - UI optimized for get me where I want to go as fast as possible
+
 ---
 
 # [fit] Build Isolation
 ![](../Common/images/docker-logo.png)
+
+^ - death to build pollution!
+- builds run in containers
+- everyone can share workers and never worry about cross-contamination
 
 ---
 
@@ -59,14 +65,27 @@ FREE - Compliments of Pivotal
 
 http://bosh.io
 
+^ - no snowflakes!
+- statically configured -  can always be recreated from scratch with a single BOSH deploy
+- If your deployment's infrastructure burns down, just deploy it somewhere else.
+- scale up/down by bumping a number in your BOSH manifest
+
 ---
 
 # [fit] Flexibility
+
+^ - almost nothing supported in the core (the anti-Jenkins)
+- integrations with other things implemented using resource abstraction
 
 ---
 
 # [fit] _Local_
 # [fit] Iteration
+
+^ - run concourse locally
+- yak shave tasks using local execution and the fly CLI
+- have confidence that local builds are identical to remote builds
+- keep your commit history clean of junk
 
 ---
 
@@ -105,6 +124,12 @@ run:
   - test
   - assemble
 ```
+
+^ - platform
+- docker image
+- inputs placed at a path in the running containers
+- parameters -> environment variables
+- run stuff!
 
 ---
 
@@ -259,6 +284,10 @@ run:
   trigger: true
 ```
 
+^ - passed - only run things that have passed upstream build
+- trigger - new versions of resource should kick this build
+- bumping versions
+
 ---
 
 # Verify Pact (function)
@@ -267,6 +296,8 @@ run:
 - task: verify-pact
   file: microservices-pact/microservices-pact-provider/task.yml
 ```
+
+^ CI config side-by-side with project!
 
 ---
 
@@ -302,6 +333,8 @@ run:
 - put: foo-provider-version
   params: {file: foo-provider-version/number}
 ```
+
+^ - putting things based on location in the inputs
 
 ---
 
