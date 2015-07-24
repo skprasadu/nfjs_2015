@@ -10,10 +10,10 @@ public class Application {
 
   @RequestMapping("/")
   String consume() {
-    InstanceInfo instance = discoveryClient.getNextServerFromEureka("PRODUCER", false)
+    ServiceInstance instance = discoveryClient.getInstances("producer")[0]
 
     RestTemplate restTemplate = new RestTemplate()
-    ProducerResponse response = restTemplate.getForObject(instance.homePageUrl, ProducerResponse.class)
+    ProducerResponse response = restTemplate.getForObject(instance.uri, ProducerResponse.class)
 
     "{\"value\": ${response.value}}"
   }
