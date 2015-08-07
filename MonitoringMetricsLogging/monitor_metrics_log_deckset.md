@@ -142,9 +142,33 @@ mentalModel.of(theCode) != theCode
 ```java
 @RequestMapping("/hello/{name}")
 public String hello(@PathVariable("name") String name) {
-   storeName(name);
-   return "Hello " + name + "!";
+    storeName(name);
+    return "Hello " + name + "!";
 }
+
+private void storeName(String name) {
+    Integer count = names.get(name);
+    if (count == null) {
+        names.put(name, 1);
+    } else {
+        names.put(name, ++count);
+    }
+}
+```
+
+Number of times a particular name has been stored.
+
+---
+
+# Gauge Example
+
+```java
+metricRegistry.register("gauge.matts", new Gauge() {
+    @Override
+    public Object getValue() {
+        return names.get("Matt");
+    }
+});
 ```
 
 Number of times a particular name has been stored.
