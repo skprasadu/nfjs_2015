@@ -27,6 +27,7 @@ jobs:
   - get: microservices-pact
     passed: [generate-pact]
   - get: foo-consumer-version
+    passed: [generate-pact]
   - task: filter-manifest
     file: microservices-pact/microservices-pact-consumer/filterManifest.yml
   - put: pws-deploy
@@ -43,6 +44,7 @@ jobs:
   - get: foo-provider-version
     params: {bump: minor, pre: alpha}
   - get: pact
+    passed: [generate-pact]
     trigger: true
   - task: verify-pact
     file: microservices-pact/microservices-pact-provider/task.yml
@@ -61,6 +63,7 @@ jobs:
   - get: microservices-pact
     passed: [verify-pact]
   - get: foo-provider-version
+    passed: [verify-pact]
   - task: filter-manifest
     file: microservices-pact/microservices-pact-provider/filterManifest.yml
   - put: pws-deploy
