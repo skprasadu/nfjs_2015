@@ -1,4 +1,4 @@
-@Grab("org.springframework.cloud:spring-cloud-starter-bus-amqp:1.0.0.RC1")
+@Grab("org.springframework.cloud:spring-cloud-starter-bus-amqp:1.0.1.RELEASE")
 @RestController
 class BasicConfig {
 
