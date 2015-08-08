@@ -20,6 +20,15 @@ Pivotal
 
 ---
 
+![right fit](../Common/images/cloud-native-book.jpg)
+# I wrote a little cloud book...
+
+FREE - Compliments of Pivotal
+
+[http://bit.ly/cloud-native-book](http://bit.ly/cloud-native-book)
+
+---
+
 # There Seems to Be Some Hype...
 ![](../Common/images/unicorn.jpg)
 
