@@ -481,7 +481,6 @@ http://kellabyte.com/2012/05/30/clarifying-the-saga-pattern/
 
 Can address:
 
-* Data Synchronizaion (noodle)
 * Spanning Queries
 
 ---
@@ -516,7 +515,7 @@ Can address:
 
 * **Samza**: [http://samza.apache.org](http://samza.apache.org)
 * **Spring XD**: [http://projects.spring.io/spring-xd](http://projects.spring.io/spring-xd)
-* **Spring Bus/Stream**: [http://github.com/spring-projects/spring-bus](http://github.com/spring-projects/spring-bus)
+* **Spring Cloud Stream**: [https://github.com/spring-cloud/spring-cloud-stream](https://github.com/spring-cloud/spring-cloud-stream)
 * **Storm**: [http://storm.apache.org](http://storm.apache.org)
 * **Spark Streaming**: [http://spark.apache.org/streaming](http://spark.apache.org/streaming)
 
