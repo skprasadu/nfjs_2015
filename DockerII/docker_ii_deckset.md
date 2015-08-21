@@ -1,5 +1,6 @@
 footer: © 2015 Matt Stine
 slidenumbers: true
+autoscale: true
 
 ![150%](../Common/images/docker-cluster.png)
 # [fit] Docker II
@@ -317,7 +318,7 @@ https://mesosphere.github.io/marathon/
 
 ---
 
-![](https://www.youtube.com/watch?v=e76a50ZgzxM)
+# [fit] DEMO
 
 ---
 
@@ -350,6 +351,13 @@ https://lattice.cf
 ![inline fit](../Common/images/weave_arch.png)
 
 http://zettio.github.io/weave/
+
+---
+
+# Docker Networking
+![inline fit](../Common/images/cnm-model.jpg)
+
+https://blog.docker.com/2015/06/networking-receives-an-upgrade/
 
 ---
 
