@@ -8,3 +8,5 @@ docker run --name some-wordpress --link some-mysql:mysql -p 8080:80 -d wordpress
 
 docker kill some-wordpress && docker rm some-wordpress
 docker kill some-mysql && docker rm some-mysql
+
+-v my-wordpress-data:/var/lib/mysql
