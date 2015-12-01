@@ -492,7 +492,7 @@ https://github.com/bethesque/pact_broker
 
 ---
 
-> If you don't meet your non-functional requirements, then you functional requirements won't function.
+> If you don't meet your non-functional requirements, then your functional requirements won't function.
 -- Me
 
 ---
