@@ -394,7 +394,7 @@ jobs:
 # Ship It!
 
 ```
-$ fly configure hello-world hello-world-pipeline.yml
+$ fly configure hello-world -c hello-world-pipeline.yml
 ```
 
 ---
