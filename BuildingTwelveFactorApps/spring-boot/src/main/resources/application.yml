@@ -1,3 +1,6 @@
 template: Hello, %s!
 default:
   name: Stranger
+endpoints:
+  health:
+    sensitive: false
