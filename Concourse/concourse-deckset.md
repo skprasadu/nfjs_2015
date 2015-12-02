@@ -113,16 +113,17 @@ platform: linux
 image: docker:///java#8
 inputs:
 - name: microservices-pact
-  path: .
 - name: foo-consumer-version
-  path: .
 params:
     TERM: dumb
+    VERSION_FILE_PATH: foo-consumer-version
 run:
-  path: ./gradlew
+  path: microservices-pact/gradlew
   args:
-  - test
-  - assemble
+  - -b
+  - microservices-pact/build.gradle
+  - :microservices-pact-consumer:test
+  - :microservices-pact-consumer:assemble
 ```
 
 ^ - platform
@@ -138,19 +139,19 @@ platform: linux
 image: docker:///java#8
 inputs:
 - name: microservices-pact
-  path: .
 - name: pact
-  path: .
 - name: foo-provider-version
-  path: .
 params:
   TERM: dumb
-  PACT_FILE: ./Foo_Consumer-Foo_Provider.json
+  PACT_FILE: ../pact/Foo_Consumer-Foo_Provider.json
+  VERSION_FILE_PATH: foo-provider-version
 run:
-   path: ./gradlew
+   path: microservices-pact/gradlew
    args:
-   - assemble
-   - pactVerify
+   - -b
+   - microservices-pact/build.gradle
+   - :microservices-pact-provider:assemble
+   - :microservices-pact-provider:pactVerify
 ```
 
 ---
@@ -175,6 +176,7 @@ run:
   type: git
   source:
     uri: https://github.com/mstine/microservices-pact.git
+    branch: master
 ```
 
 ---
@@ -281,6 +283,7 @@ run:
 - get: foo-provider-version
   params: {bump: minor, pre: alpha}
 - get: pact
+  passed: [generate-pact]
   trigger: true
 ```
 
@@ -308,19 +311,19 @@ platform: linux
 image: docker:///java#8
 inputs:
 - name: microservices-pact
-  path: .
 - name: pact
-  path: .
 - name: foo-provider-version
-  path: .
 params:
   TERM: dumb
-  PACT_FILE: ./Foo_Consumer-Foo_Provider.json
+  PACT_FILE: ../pact/Foo_Consumer-Foo_Provider.json
+  VERSION_FILE_PATH: foo-provider-version
 run:
-   path: ./gradlew
+   path: microservices-pact/gradlew
    args:
-   - assemble
-   - pactVerify
+   - -b
+   - microservices-pact/build.gradle
+   - :microservices-pact-provider:assemble
+   - :microservices-pact-provider:pactVerify
 ```
 
 ---
@@ -394,7 +397,7 @@ jobs:
 # Ship It!
 
 ```
-$ fly configure hello-world -c hello-world-pipeline.yml
+$ fly set-pipeline -p hello-world -c hello-world-pipeline.yml
 ```
 
 ---
