@@ -4,18 +4,18 @@ jobs:
   public: true
   serial: true
   plan:
-  - get: microservices-pact
-    trigger: true
-  - get: foo-consumer-version
-    params: {bump: minor, pre: alpha}
-  - task: generate-pact
-    file: microservices-pact/microservices-pact-consumer/task.yml
-  - put: pact
-    params: {from: microservices-pact-consumer/target/pacts/Foo_Consumer-Foo_Provider.json}
-  - put: foo-consumer
-    params: {from: microservices-pact-consumer/build/libs/microservices-pact-consumer-.*.jar$}
-  - put: foo-consumer-version
-    params: {file: foo-consumer-version/number}
+    - get: microservices-pact
+      trigger: true
+    - get: foo-consumer-version
+      params: {bump: minor, pre: alpha}
+    - task: generate-pact
+      file: microservices-pact/microservices-pact-consumer/task.yml
+    - put: pact
+      params: {from: microservices-pact-consumer/target/pacts/Foo_Consumer-Foo_Provider.json}
+    - put: foo-consumer
+      params: {from: microservices-pact-consumer/build/libs/microservices-pact-consumer-.*.jar$}
+    - put: foo-consumer-version
+      params: {file: foo-consumer-version/number}
 
 - name: deploy-consumer
   public: true
@@ -32,7 +32,7 @@ jobs:
     file: microservices-pact/microservices-pact-consumer/filterManifest.yml
   - put: pws-deploy
     params:
-      manifest: filter-manifest/microservices-pact-consumer/versioned-manifest/manifest.yml
+      manifest: versioned-manifest/manifest.yml
 
 - name: verify-pact
   public: true
@@ -68,13 +68,14 @@ jobs:
     file: microservices-pact/microservices-pact-provider/filterManifest.yml
   - put: pws-deploy
     params:
-      manifest: filter-manifest/microservices-pact-provider/versioned-manifest/manifest.yml
+      manifest: versioned-manifest/manifest.yml
 
 resources:
 - name: microservices-pact
   type: git
   source:
     uri: https://github.com/mstine/microservices-pact.git
+    branch: master
 
 - name: pact
   type: s3
