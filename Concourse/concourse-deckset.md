@@ -27,6 +27,14 @@ FREE - Compliments of Pivotal
 
 ---
 
+# What is Concourse?
+
+- Open Source CI Pipeline system
+- Developed by Pivotal
+- [http://concourse.ci](http://concourse.ci)
+
+---
+
 # Because the world needed another CI system...
 # [fit] 0_o
 
@@ -247,7 +255,13 @@ run:
 ---
 
 # [fit] Implement Your Own
-[http://concourse.ci/implementing-resources.html](http://concourse.ci/implementing-resources.html)
+
+- Docker Image w/ 3 Scripts
+- `/opt/resource/check`
+- `/opt/resource/in`
+- `/opt/resource/out`
+- Add to your Concourse deploy via `groundcrew.additional_resource_types` property.
+- [http://concourse.ci/implementing-resources.html](http://concourse.ci/implementing-resources.html)
 
 ---
 
@@ -412,6 +426,30 @@ $ fly set-pipeline -p hello-world -c hello-world-pipeline.yml
 
 # [fit] Let's Play
 ![fit](images/concourse.png)
+
+^ Demonstrate loading the pipeline
+Demonstrate modifying the pipeline
+Demonstrate intercepting the container
+Poke around with the BOSH deployment, scale up/down workers
+Examine resource types in the pipeline
+Examine job types in the pipeline
+Kick off builds by pushing code to github
+Demonstrate intercepting the container
+Pipeline examples: SCS, Concourse itself
+
+---
+
+# Intercepting with Fly
+
+Intercepting a Job Step
+```
+fly -t <target> intercept -j <pipeline>/<job> -b <build #> -s <step>
+```
+
+Intercepting a Resource
+```
+fly -t <target> intercept --check <pipeline>/<resource> /bin/sh
+```
 
 ---
 
