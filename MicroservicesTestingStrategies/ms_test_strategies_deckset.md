@@ -120,6 +120,10 @@ FREE - Compliments of Pivotal
 
 ---
 
+![inline](../Common/images/wewut.jpeg)
+
+---
+
 # [fit] Integration
 
 ---
@@ -435,6 +439,10 @@ https://github.com/bethesque/pact_broker
 ---
 
 # [fit] Discover the _risks_ you _care_ about...
+
+---
+
+![inline](../Common/images/exploreit.png)
 
 ---
 
