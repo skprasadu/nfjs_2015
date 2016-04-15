@@ -260,7 +260,17 @@ run:
 - `/opt/resource/check`
 - `/opt/resource/in`
 - `/opt/resource/out`
-- Add to your Concourse deploy via `groundcrew.additional_resource_types` property.
+- Add to your Concourse deploy via `resource_types` section in pipeline config:
+
+```
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+```
+
 - [http://concourse.ci/implementing-resources.html](http://concourse.ci/implementing-resources.html)
 
 ---
