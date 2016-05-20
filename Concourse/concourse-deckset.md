@@ -388,7 +388,6 @@ run:
 # Getting Started
 
 ```
-$ git clone https://github.com/concourse/concourse.git
 $ vagrant init concourse/lite
 $ vagrant up
 ```
